@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+	#info {
+	  position: absolute;
+	  top: 10px;
+	  width: 100%;
+
+	  padding: 5px;
+	  text-align: center;
+	  font-size: 20px;
+	  color: #ffff00
+	}
+
+	body {
+	  overflow: hidden
+	}
+
+</style>
+</head>
+
+<body>
+<div id="info"> Train in Three.JS <br>
+  <a href="javascript:toggleTurn();" style="color:gray;">Toggle</a>
+</div>
+<script src="https://threejs.org/build/three.min.js"></script>
+<script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+<script>
+var renderer, scene, camera, angle = 0;
+var turn = false;
+var group = new THREE.Group();
+init();
+animate();
+
+function toggleTurn() {
+  turn = !turn;
+}
+
+function init() {
+  renderer = new THREE.WebGLRenderer();
+  document.body.appendChild(renderer.domElement);
+  var width = window.innerWidth;
+  var height = window.innerHeight;
+  renderer.setSize(width, height);
+  scene = new THREE.Scene();
+  var grid = new THREE.GridHelper(20, 20);
+  scene.add(grid);
+  var axes = new THREE.AxesHelper(5);
+  scene.add(axes);
+  camera = new THREE.PerspectiveCamera(35, width / height, 1, 100);
+  camera.position.y = 16;
+  camera.position.z = 40;
+  camera.lookAt(new THREE.Vector3(0, 0, 0));
+  let controls = new THREE.OrbitControls(camera, renderer.domElement);
+  window.addEventListener('resize', onWindowResize, false);
+  var cubeGeometry = new THREE.BoxGeometry(1, 0.75, 1.75);
+  var cubeMaterial = new THREE.MeshNormalMaterial();
+  //車廂
+  cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+  var cube1 = cube.clone();
+  cube.position.set(0.79, 0.07, 2.25);
+  cube1.position.set(1, 0.07, 0);
+  cube.rotation.y = -(Math.PI / 18);
+
+  //輪子
+  var wheelGeometry = new THREE.TorusGeometry(0.2, 0.07, 16, 100);
+  var wheelMaterial = new THREE.MeshBasicMaterial({
+    color: 0x666666
+  });
+  wheel = new THREE.Mesh(wheelGeometry, wheelMaterial);
+  var wheelB1 = wheel.clone();
+  wheelB1.position.set(0.5, -0.3, 0.6); //後右前輪
+  wheelB1.rotation.set(0, -(Math.PI / 1.8), (270 / 180) * Math.PI);
+  var wheelB2 = wheel.clone();
+  wheelB2.position.set(0.5, -0.3, -0.5); //後右後輪
+  wheelB2.rotation.set(0, -(Math.PI / 1.8), (270 / 180) * Math.PI);
+  var wheelB3 = wheel.clone();
+  wheelB3.position.set(1.5, -0.3, 0.6); //後左前輪
+  wheelB3.rotation.set(0, -(Math.PI / 1.8), (270 / 180) * Math.PI);
+  var wheelB4 = wheel.clone();
+  wheelB4.position.set(1.5, -0.3, -0.5); //後左後輪
+  wheelB4.rotation.set(0, -(Math.PI / 1.8), (270 / 180) * Math.PI);
+  var wheelF1 = wheel.clone();
+  wheelF1.position.set(0.2, -0.3, 2.8); //前右前輪
+  wheelF1.rotation.set(0, -(Math.PI / 1.8), (270 / 180) * Math.PI);
+  var wheelF2 = wheel.clone();
+  wheelF2.position.set(0.35, -0.3, 1.8); //前右後輪
+  wheelF2.rotation.set(0, -(Math.PI / 1.8), (270 / 180) * Math.PI);
+  var wheelF3 = wheel.clone();
+  wheelF3.position.set(1.15, -0.3, 3); //前左前輪
+  wheelF3.rotation.set(0, -(Math.PI / 1.8), (270 / 180) * Math.PI);
+  var wheelF4 = wheel.clone();
+  wheelF4.position.set(1.35, -0.3, 1.8); //前左後輪
+  wheelF4.rotation.set(0, -(Math.PI / 1.8), (270 / 180) * Math.PI);
+  //車頭
+
+  var headGeometry = new THREE.CylinderGeometry(0.45, 0.45, 1);
+  var headMaterial = new THREE.MeshBasicMaterial({
+    color: 0x20b2aa
+  });
+  head = new THREE.Mesh(headGeometry, headMaterial);
+  head.position.set(0.65, 0.33, 3);
+  head.rotation.set(0, -(Math.PI / 1.8), (270 / 180) * Math.PI);
+  //煙囪
+  var chimneyGeometry = new THREE.CylinderGeometry(0.2, 0.25, 0.5);
+  var chimneyMaterial = new THREE.MeshBasicMaterial({
+    color: 0xffffff
+  });
+  chimney = new THREE.Mesh(chimneyGeometry, chimneyMaterial);
+  chimney.position.set(0.6, 0.75, 3);
+  chimney.rotation.set(0, (Math.PI / 1.8), 0);
+  //車廂連結線
+  var lineGeometry = new THREE.CylinderGeometry(0.05, 0.05, 2);
+  var lineMaterial = new THREE.MeshBasicMaterial({
+    color: 0x20b2aa
+  });
+  lines = new THREE.Mesh(lineGeometry, lineMaterial);
+  var line1 = lines.clone();
+  lines.position.set(0.7, -0.2, 1);
+  lines.rotation.set(0, -(Math.PI / 1.8), (270 / 180) * Math.PI);
+  line1.position.set(1, -0.2, 1);
+  line1.rotation.set(0, -(Math.PI / 1.8), (270 / 180) * Math.PI);
+  //車頭下方
+  var cube2Geometry = new THREE.BoxGeometry(0.5, 0.6, 0.8);
+  var cube2Material = new THREE.MeshBasicMaterial({
+    color: 0xff3333
+  });
+  cube2 = new THREE.Mesh(cube2Geometry, cube2Material);
+  cube2.position.set(0.65, 0, 3.2);
+  cube2.rotation.set(0, -(Math.PI / 1.8), (10 / 180) * Math.PI);
+
+  group.add(cube, cube1, cube2);
+  group.add(wheelB1, wheelB2, wheelB3, wheelB4, wheelF1, wheelF2, wheelF3, wheelF4);
+  group.add(head, chimney, lines, line1);
+  scene.add(group);
+
+}
+
+function animate() {
+  if (turn) angle += 0.01;
+  group.position.set(8 * Math.cos(angle), 0.5, 8 * Math.sin(angle));
+  group.rotation.y = -angle;
+  requestAnimationFrame(animate);
+  renderer.render(scene, camera);
+}
+
+function onWindowResize() {
+  var width = window.innerWidth;
+  var height = window.innerHeight;
+  camera.aspect = width / height;
+  camera.updateProjectionMatrix();
+  renderer.setSize(width, height);
+}
+
+</script>
+</body>
+
+</html>
