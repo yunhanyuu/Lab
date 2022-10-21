@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+	
+	#info {
+	  position: absolute;
+	  top: 10px;
+	  width: 100%;
+
+	  padding: 5px;
+	  text-align: center;
+	  font-size: 20px;
+	  color: #ffff00
+	}
+
+	body {
+	  overflow: hidden;
+	}
+
+
+</style>
+</head>
+<div id="info"> Clock <br>
+press start over 3 second will reset
+  
+</div>
+
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script src="https://threejs.org/build/three.min.js"></script>
+<script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+<button id = "startB" style = "position:absolute;left:50px; top:20px">start
+
+</button>
+<button id = "quickB" style = "position:absolute;left:50px; top:40px">+10
+
+</button>
+<button id = "changeMode" style = "position:absolute;left:50px; top:60px">change mode
+
+</button>
+<audio id="soundtrack" style="display:none">
+<source src="timeout.mp3" type='audio/mp3'>
+</audio>
+
+<body>
+<script>
+
+var renderer, scene, camera, angle = 0;
+var group = new THREE.Group();
+var group1 = new THREE.Group();
+var _startB = false;
+var _quickB = false;
+var _changeMode = false;
+var second;
+var run=0;
+var duration,soundTrack;
+init();
+animate();
+	
+
+$('#startB').click(function() {
+_startB = !_startB;
+
+    pressed = {};
+
+window.onmousedown = function(e) {
+    if ( pressed[e.which] ) return;
+    pressed[e.which] = e.timeStamp;
+};
+    
+window.onmouseup = function(e) {
+    if ( !pressed[e.which] ) return;
+     duration = ( e.timeStamp - pressed[e.which] ) / 1000;
+    console.log(`time: ${duration}`);
+    pressed[e.which] = 0;
+};
+	if(duration>=3){
+  _startB = !_startB;
+  angle = 0;
+  clearTimeout(run);
+ 
+  }
+  
+	if(run)
+		clearTimeout(run);
+	animate();
+
+})
+	
+;
+$('#quickB').click(function() {
+	
+  angle += (2 * Math.PI) / 6;
+	group.rotation.z = angle;
+
+	
+});
+$('#changeMode').click(function() {
+	_changeMode = !_changeMode;
+    if(run)
+		clearTimeout(run);
+	animate();
+
+	
+});
+function buildClock() {
+ 
+  var clock = new THREE.Object3D();
+  let points = [];
+	
+  //時鐘框架
+  points.push(new THREE.Vector3(-7.5, -15,  0), new THREE.Vector3(7.5,-15,0), new THREE.Vector3(15, 0, 0), new THREE.Vector3(-15, 0, 0), new THREE.Vector3(0, 15, 0), new THREE.Vector3(-7.5, -15 , -10), new THREE.Vector3(7.5,-15, -10),new THREE.Vector3(15,0, -10),new THREE.Vector3(-15,0, -10),new THREE.Vector3(0,15, -10)
+  );
+
+  var geometry = new THREE.BufferGeometry().setFromPoints(points);
+  let indices = [];
+  indices.push(0,1,2, 0,2,3, 3,2,4, 5,7,6, 5,8,7, 7,8,9, 3,4,8, 4,9,8, 2,7,9, 4,2,9, 6,2,1, 7,2,6, 0,3,5, 3,8,5, 0,5,1, 5,6,1);
+  geometry.setIndex(indices);
+  geometry.computeBoundingSphere();
+  geometry.computeVertexNormals();
+  let mesh = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({
+    color: 0x492E28
+  }));
+  clock.add(mesh);
+  clock.add(new THREE.AxesHelper(40));
+  //時鐘面
+  var clockFaceGeometry = new THREE.CylinderGeometry(10, 10, 5,32);
+  var clockFaceMaterial = new THREE.MeshBasicMaterial({
+    color: 0xFFBB66
+  });
+	clockFace = new THREE.Mesh(clockFaceGeometry, clockFaceMaterial);
+  clockFace.position.set(0,-2,-2);
+  clockFace.rotation.set(0, (90 / 180) * Math.PI, (90 / 180) * Math.PI);
+ var secondGeometry = new THREE.BoxGeometry(8, 1, 4);
+  var secondMaterial = new THREE.MeshBasicMaterial({
+    color: 0xAA0000
+  });
+  second = new THREE.Mesh(secondGeometry, secondMaterial);
+  second.position.set(0, 3,-1);
+  second.rotation.set(0,0,(270/ 180) * Math.PI);
+  //固定秒針
+  var clockCenterGeometry = new THREE.CylinderGeometry(1, 1, 1,32);
+  var clockCenterMaterial = new THREE.MeshBasicMaterial({
+    color: 0x000000
+  });
+	clockCenter = new THREE.Mesh(clockCenterGeometry, clockCenterMaterial);
+  clockCenter.position.set(0,0,1);
+  clockCenter.rotation.set(0, (90 / 180) * Math.PI, (90 / 180) * Math.PI);
+  //箭頭
+  let points1 = [];
+     points1.push(new THREE.Vector3(-1, 7, 1), new THREE.Vector3(1,7, 1), new THREE.Vector3(0, 8, 1), new THREE.Vector3(-1, 7, -2), new THREE.Vector3(1, 7, -2), new THREE.Vector3(0, 8, -2));
+  var geometry1 = new THREE.BufferGeometry().setFromPoints(points1);
+  let indices1 = [];
+  indices1.push(0,1,2, 3,4,5, 1,2,0, 5,2,1, 5,4,2, 0,4,3, 0,2,4, 0,3,1, 3,5,1);
+  geometry1.setIndex(indices1);
+  geometry1.computeBoundingSphere();
+  geometry1.computeVertexNormals();
+  let mesh1 = new THREE.Mesh(geometry1, new THREE.MeshBasicMaterial({
+    color: 0x000000
+  }));
+  group.add(mesh1);
+ 
+  group.add(clockCenter,second);
+  scene.add(clock,clockFace)
+  scene.add(group);
+
+
+  
+}
+
+function init() {
+
+  scene = new THREE.Scene();
+
+  camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
+  camera.position.set(0,10,75) ;
+
+ // var gridXZ = new THREE.GridHelper(200, 20, 'red', 'white');
+ // scene.add(gridXZ);
+
+  renderer = new THREE.WebGLRenderer();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setClearColor(0x888888);
+
+  let controls = new THREE.OrbitControls(camera, renderer.domElement);
+  
+  document.body.appendChild(renderer.domElement);
+
+
+  buildClock();
+window.addEventListener('resize', onWindowResize, false);
+	soundTrack = document.getElementById('soundtrack');
+  
+}
+function onWindowResize() {
+
+  var width = window.innerWidth;
+  var height = window.innerHeight;
+  camera.aspect = width / height;
+  camera.updateProjectionMatrix();
+  renderer.setSize(width, height);
+
+}
+function animate() {
+
+
+ if (_startB === true) {
+    if (_changeMode === false) {
+      angle += (2 * Math.PI) / 600;
+      group.rotation.z = angle;
+      run = setTimeout(function() {
+        if (angle.toFixed(3) >= ((2 * Math.PI).toFixed(3))) {
+          angle = 0;
+          clearTimeout(run);
+          soundTrack.play();
+        } else {
+          animate();
+        }
+      }, 90);
+    } else {
+      angle += (2 * Math.PI) / 60;
+      group.rotation.z = angle;
+      run = setTimeout(function() {
+        if (angle.toFixed(3) >= (2 * Math.PI).toFixed(3)) {
+          angle = 0;
+          group.rotation.z = angle;
+          clearTimeout(run);
+          soundTrack.play();
+          changeMode = true;
+
+        } else {
+          animate();
+        }
+      }, 1000);
+    }
+
+
+  }
+
+		
+	
+
+
+
+	renderer.render(scene, camera);
+ //requestAnimationFrame(animate);
+  
+
+}
+
+
+
+</script>
+</body>
+
+</html>
