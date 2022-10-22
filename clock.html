@@ -212,6 +212,7 @@ function animate() {
         if (angle.toFixed(3) >= ((2 * Math.PI).toFixed(3))) {
           angle = 0;
           clearTimeout(run);
+	  animate();
           soundTrack.play();
         } else {
           animate();
@@ -224,6 +225,7 @@ function animate() {
         if (angle.toFixed(3) >= (2 * Math.PI).toFixed(3)) {
           angle = 0;
           group.rotation.z = angle;
+	  animate();
           clearTimeout(run);
           soundTrack.play();
           changeMode = true;
