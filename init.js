@@ -17,7 +17,8 @@ function init() {
   let controls = new OrbitControls(camera, renderer.domElement);
 
   ////////////////////////////////////////////////////////
-  
+   var gridXZ = new THREE.GridHelper(300, 30, 'red', 'white');
+  scene.add(gridXZ);
   scene.add(makeCar());
   ///////////////////
   var pos1 = new THREE.Vector3(40, 0, 50);
