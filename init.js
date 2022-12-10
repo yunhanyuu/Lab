@@ -13,7 +13,7 @@ function init() {
 
   camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 1, 10000);
   camera.position.set(300, 400, 500); // camera at (0,0,500)
-  let controls = new THREE.OrbitControls(camera, renderer.domElement);
+  let controls = new OrbitControls(camera, renderer.domElement);
 
   ////////////////////////////////////////////////////////
   
