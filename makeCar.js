@@ -1,10 +1,10 @@
 import * as THREE from "https://threejs.org/build/three.module.js"
-
- var keys;
+import {keys} from "https://yunhanyuu.github.io/Lab/init.js";
+//var keys;
 var T = 5;
- var clock = new THREE.Clock();
+var clock = new THREE.Clock();
 var ts = clock.getElapsedTime();
- function makeCar() {
+function makeCar() {
   var car = new THREE.Group();
   var normalMat = new THREE.MeshNormalMaterial({
     wireframe: true
@@ -15,7 +15,7 @@ var ts = clock.getElapsedTime();
   car.add(body, nose);
   return car;
 }
- function keyframe(t) {
+function keyframe(t) {
   var s = ((t - ts) % T) / T;
 
   for (var i = 1; i < keys.length; i++) {
@@ -31,5 +31,5 @@ var ts = clock.getElapsedTime();
   car.quaternion.slerpQuaternions(keys[ii][2], keys[ii + 1][2], a);
 }
 export {makeCar, keyframe};
-export {keys, clock};
+export { clock};
 
