@@ -1,6 +1,6 @@
 import * as THREE from "https://threejs.org/build/three.module.js"
 
-var keys;
+export var keys;
 var T = 5;
 var clock = new THREE.Clock();
 var ts = clock.getElapsedTime();
@@ -30,4 +30,4 @@ export function keyframe(t) {
   car.position.lerpVectors(keys[ii][1], keys[ii + 1][1], a);
   car.quaternion.slerpQuaternions(keys[ii][2], keys[ii + 1][2], a);
 }
-export { clock,keys };
+
