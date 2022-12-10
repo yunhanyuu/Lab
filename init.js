@@ -1,6 +1,6 @@
 import * as THREE from "https://threejs.org/build/three.module.js"
 import {makeCar,keyframe} from "https://yunhanyuu.github.io/Lab/makeCar.js"
-import {clock} from "https://yunhanyuu.github.io/Lab/makeCar.js"
+import {clock,car} from "https://yunhanyuu.github.io/Lab/makeCar.js"
 import { OrbitControls } from 'https://cdn.skypack.dev/three@0.136/examples/jsm/controls/OrbitControls.js';
 var camera, scene, renderer,keys;
 function init() {
