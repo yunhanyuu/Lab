@@ -2,7 +2,7 @@ import * as THREE from "https://threejs.org/build/three.module.js"
 
 export var keys;
 var T = 5;
-var clock = new THREE.Clock();
+export var clock = new THREE.Clock();
 var ts = clock.getElapsedTime();
 export function makeCar() {
   var car = new THREE.Group();
