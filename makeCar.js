@@ -18,7 +18,7 @@ function makeCar() {
 function keyframe(t) {
   var s = ((t - ts) % T) / T;
 
-  for (var i = 1; i < keys.length; i++) {
+  for (var i = 1; i < 6; i++) {
     if (keys[i][0] > s) break;
   }
   // take i-1
