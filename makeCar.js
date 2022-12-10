@@ -4,8 +4,8 @@ import {keys} from "https://yunhanyuu.github.io/Lab/init.js";
 var T = 5;
 var clock = new THREE.Clock();
 var ts = clock.getElapsedTime();
+var car = new THREE.Group();
 function makeCar() {
-  var car = new THREE.Group();
   var normalMat = new THREE.MeshNormalMaterial({
     wireframe: true
   });
@@ -31,4 +31,4 @@ function keyframe(t) {
   car.quaternion.slerpQuaternions(keys[ii][2], keys[ii + 1][2], a);
 }
 export {makeCar, keyframe};
-export { clock};
+export { clock, car};
