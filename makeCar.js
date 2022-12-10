@@ -30,3 +30,4 @@ export function keyframe(t) {
   car.position.lerpVectors(keys[ii][1], keys[ii + 1][1], a);
   car.quaternion.slerpQuaternions(keys[ii][2], keys[ii + 1][2], a);
 }
+export { clock };
