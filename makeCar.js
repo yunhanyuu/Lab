@@ -24,7 +24,7 @@ function keyframe(t) {
   // take i-1
   var ii = i - 1;
   var a = (s - keys[ii][0]) / (keys[ii + 1][0] - keys[ii][0]);
-  intKey = [keys[ii][1][0] * (1 - a) + keys[ii + 1][1][0] * a,
+  var intKey = [keys[ii][1][0] * (1 - a) + keys[ii + 1][1][0] * a,
     keys[ii][1][1] * (1 - a) + keys[ii + 1][1][1] * a
   ];
   car.position.lerpVectors(keys[ii][1], keys[ii + 1][1], a);
